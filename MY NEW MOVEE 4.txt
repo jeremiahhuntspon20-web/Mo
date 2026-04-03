@@ -2168,7 +2168,7 @@ RunService.RenderStepped:Connect(function(dt)
     local ping=math.floor(LocalPlayer:GetNetworkPing()*1000)
     fpsLbl.Text="FPS "..fps.."  |  "..ping.."ms"
     win.Visible=guiVisible
-end
+end)
 
 task.defer(function()
     local leftList  = {"MobAutoLeft","MobAutoLPlay","MobFloatLeft","MobDropLeft","MobTPLeft","MobCarryLeft","MobBatLeft","MobStealLeft"}
