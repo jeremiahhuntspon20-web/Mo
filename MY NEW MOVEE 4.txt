@@ -12,7 +12,7 @@ repeat task.wait() until game:IsLoaded()
 --   2. Replace KEYS_PASTEBIN_URL below with your raw Pastebin URL
 --   3. Hand each user their own unique key — you manage the list
 -- ─────────────────────────────────────────────────────────────────────────────
-local KEYS_PASTEBIN_URL = "https://pastebin.com/raw/gNsUvq7H"
+local KEYS_PASTEBIN_URL = "https://pastebin.com/raw/YOUR_KEY_LIST_PASTE_ID"
 local KEY_SAVE_FILE     = "LazyHubKey.txt"  -- saves locally so user only types once
 
 local function checkKey(inputKey)
@@ -2168,7 +2168,7 @@ RunService.RenderStepped:Connect(function(dt)
     local ping=math.floor(LocalPlayer:GetNetworkPing()*1000)
     fpsLbl.Text="FPS "..fps.."  |  "..ping.."ms"
     win.Visible=guiVisible
-end)
+end
 
 task.defer(function()
     local leftList  = {"MobAutoLeft","MobAutoLPlay","MobFloatLeft","MobDropLeft","MobTPLeft","MobCarryLeft","MobBatLeft","MobStealLeft"}
