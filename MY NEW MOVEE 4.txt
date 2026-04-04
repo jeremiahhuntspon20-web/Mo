@@ -573,34 +573,32 @@ local function stopBatAimbot()
     if Connections.batAimbot then Connections.batAimbot:Disconnect(); Connections.batAimbot = nil end
 end
 
--- ── INFINITE JUMP (SAFE: zeroes Y first, fixed force, no stacking, no death) ──
+-- ── INFINITE JUMP (SPAM SAFE: hard cap, no stacking, never kills) ──────────
 local infiniteJumpConn = nil
 local lastJumpTime = 0
-local JUMP_COOLDOWN = 0.4  -- longer cooldown prevents rapid velocity stacking
-local SAFE_JUMP_FORCE = 50  -- fixed value, never stacks, never kills
+local JUMP_COOLDOWN = 0.5   -- half second between jumps, prevents spam death
+local SAFE_JUMP_FORCE = 45  -- low safe value, never fatal
 local function startInfiniteJump()
     if infiniteJumpConn then return end
     infiniteJumpConn = UserInputService.JumpRequest:Connect(function()
         if not Enabled.InfiniteJump then return end
         local now = tick()
-        if now - lastJumpTime < JUMP_COOLDOWN then return end
+        if now - lastJumpTime < JUMP_COOLDOWN then return end  -- hard spam block
         local c = LocalPlayer.Character; if not c then return end
         local hum = c:FindFirstChildOfClass("Humanoid"); if not hum then return end
         local hrp = c:FindFirstChild("HumanoidRootPart"); if not hrp then return end
+        -- Only jump when actually airborne
         local st = hum:GetState()
-        if st == Enum.HumanoidStateType.Freefall
-        or st == Enum.HumanoidStateType.Jumping
-        or st == Enum.HumanoidStateType.Physics then
-            lastJumpTime = now
-            local curV = hrp.AssemblyLinearVelocity
-            -- Zero out Y completely first so we NEVER stack velocity
-            hrp.AssemblyLinearVelocity = Vector3.new(curV.X, 0, curV.Z)
-            task.wait()
-            -- Then apply a fixed safe jump force
-            local curV2 = hrp.AssemblyLinearVelocity
-            hrp.AssemblyLinearVelocity = Vector3.new(curV2.X, SAFE_JUMP_FORCE, curV2.Z)
-            hum:ChangeState(Enum.HumanoidStateType.Jumping)
-        end
+        if st ~= Enum.HumanoidStateType.Freefall
+        and st ~= Enum.HumanoidStateType.Jumping
+        and st ~= Enum.HumanoidStateType.Physics then return end
+        -- Hard cap: if already moving up fast, do nothing
+        if hrp.AssemblyLinearVelocity.Y > 20 then return end
+        lastJumpTime = now
+        local curV = hrp.AssemblyLinearVelocity
+        -- Always SET to safe value, never add to existing Y
+        hrp.AssemblyLinearVelocity = Vector3.new(curV.X, SAFE_JUMP_FORCE, curV.Z)
+        hum:ChangeState(Enum.HumanoidStateType.Jumping)
     end)
 end
 local function stopInfiniteJump()
